@@ -2,295 +2,236 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Админ-панель | Управление кланом</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Clan Site | Главная</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #0b0e16;
-            font-family: system-ui, 'Segoe UI', monospace;
+            font-family: 'Segoe UI', 'Roboto', 'Poppins', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            min-height: 100vh;
             color: #eef5ff;
-            padding: 2rem;
         }
-        .admin-container {
-            max-width: 800px;
+
+        /* Анимированный фон */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at 20% 30%, rgba(45, 70, 185, 0.15), transparent 60%),
+                        radial-gradient(circle at 80% 70%, rgba(155, 65, 225, 0.1), transparent 60%);
+        }
+
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: #11161f;
-            border-radius: 32px;
-            padding: 2rem;
-            border: 1px solid #2a3550;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            padding: 2rem 1.5rem;
         }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(120deg, #b3ccff, #d9c5ff);
+
+        /* Header */
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem 4rem;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            margin-bottom: 3rem;
+        }
+
+        .clan-name {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #7aa2f7, #bb9aff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(122, 162, 247, 0.3);
+            margin-bottom: 1rem;
         }
-        .sub {
-            color: #8492b0;
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #9aa9c7;
             margin-bottom: 2rem;
-            border-left: 3px solid #3b6eff;
-            padding-left: 1rem;
         }
-        .form-group {
-            margin-bottom: 1.8rem;
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
+
+        .card {
+            background: rgba(20, 28, 45, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 2rem 1.8rem;
+            border: 1px solid rgba(100, 150, 255, 0.25);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
-        input, textarea {
-            width: 100%;
-            background: #1e2538;
-            border: 1px solid #2f3b5c;
-            padding: 12px 16px;
-            border-radius: 20px;
-            color: white;
-            font-size: 1rem;
-            transition: 0.2s;
-            font-family: inherit;
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(122, 162, 247, 0.6);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(122, 162, 247, 0.2);
         }
-        textarea {
-            min-height: 140px;
-            resize: vertical;
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #5f8bff;
-            box-shadow: 0 0 0 2px rgba(95, 139, 255, 0.3);
-        }
-        button {
-            background: #2b3b6e;
-            border: none;
-            color: white;
-            font-weight: bold;
-            padding: 12px 28px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
-            margin-right: 12px;
-            margin-top: 8px;
-        }
-        button.primary {
-            background: #3b6eff;
-            box-shadow: 0 0 10px rgba(59, 110, 255, 0.3);
-        }
-        button.primary:hover {
-            background: #2d5be0;
-            transform: scale(1.02);
-        }
-        button.danger {
-            background: #4a2f3f;
-            border-color: #a03a5a;
-        }
-        button.danger:hover {
-            background: #6a2f4a;
-        }
-        .preview-card {
-            background: #0f1320;
-            border-radius: 24px;
-            padding: 1.2rem;
-            margin-top: 2rem;
-            border-left: 5px solid #3b6eff;
-        }
-        .badge {
-            background: #1c253b;
-            padding: 6px 12px;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-family: monospace;
-        }
-        hr {
-            margin: 1.2rem 0;
-            border-color: #252e44;
-        }
-        .status {
-            background: #1b3328;
-            color: #9affcf;
-            padding: 6px 12px;
+
+        .telegram-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: #1f2a48;
+            padding: 14px 24px;
             border-radius: 60px;
-            display: inline-block;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: 0.2s;
+            border: 1px solid #2d3e6e;
+        }
+
+        .telegram-link:hover {
+            background: #2a3870;
+            transform: scale(1.02);
+            border-color: #5f8bff;
+        }
+
+        .creator-badge {
+            background: linear-gradient(95deg, #1a1f2e, #11161f);
+            border-radius: 50px;
+            padding: 0.8rem 1.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            border-left: 4px solid #2e7dff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(100, 150, 255, 0.2);
+            font-size: 0.85rem;
+            color: #6b7a99;
+        }
+
+        button {
+            background: rgba(30, 40, 65, 0.9);
+            border: 1px solid #3e4e7a;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
             font-size: 0.8rem;
         }
-        footer {
-            text-align: center;
-            margin-top: 2.5rem;
-            color: #5d6f92;
-            font-size: 0.75rem;
+
+        button:hover {
+            background: #2a3870;
         }
-        .flex-btns {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+
+        @media (max-width: 640px) {
+            .clan-name { font-size: 2.5rem; }
+            .card { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
-<div class="admin-container">
-    <h1>🛡️ Админ-панель клана</h1>
-    <div class="sub">Управление контентом публичного сайта — изменения применяются мгновенно</div>
-
-    <div class="form-group">
-        <label>🏷️ Название клана (HTML поддерживается)</label>
-        <input type="text" id="clanNameInput" placeholder="Например: ⚡ DARK LEGION ⚡">
-    </div>
-
-    <div class="form-group">
-        <label>📝 Слоган / подзаголовок</label>
-        <input type="text" id="taglineInput" placeholder="| Элитное сообщество | Тактика |">
-    </div>
-
-    <div class="form-group">
-        <label>📢 Блок новостей / объявлений (HTML + текст)</label>
-        <textarea id="newsInput" placeholder="<p>🏆 Новый рекорд клана!</p><p>🔥 Набор в отряд каждую пятницу</p>"></textarea>
-        <small style="opacity:0.6">Можно использовать теги &lt;p&gt;, &lt;b&gt;, &lt;ul&gt; и т.д.</small>
-    </div>
-
-    <div class="form-group">
-        <label>🔗 Ссылка на Telegram чат (если нужно менять)</label>
-        <input type="text" id="chatLinkInput" placeholder="https://t.me/+sm7bhU5XPSNkYzgy">
-    </div>
-
-    <div class="form-group">
-        <label>🧑‍💻 Юзернейм создателя (Telegram)</label>
-        <input type="text" id="creatorTagInput" placeholder="@LAFIX_noone_LafYaf2x">
-    </div>
-
-    <div class="flex-btns">
-        <button class="primary" id="saveBtn">💾 Сохранить изменения</button>
-        <button id="resetBtn">⟳ Сбросить к значениям по умолчанию</button>
-        <button id="viewSiteBtn" class="primary" style="background:#292e45;">👁️ Открыть сайт клана</button>
-    </div>
-
-    <div class="preview-card">
-        <div class="badge">⚡ Живая превью (что увидят пользователи)</div>
-        <div style="margin: 12px 0;">
-            <strong id="previewName">⚡ DARK LEGION ⚡</strong><br>
-            <span id="previewTagline">| Элитное сообщество | Тактика |</span>
+<div class="bg-animation"></div>
+<div class="container">
+    <div class="hero">
+        <h1 class="clan-name">⚡ DARK LEGION ⚡</h1>
+        <p class="tagline">| Элитное сообщество | Тактика | Дружба | Победы |</p>
+        <div class="creator-badge">
+            👑 Создатель клана: <strong>@LAFIX_noone_LafYaf2x</strong>
         </div>
-        <div id="previewNewsShort">🏆 Еженедельные турниры...</div>
-        <hr>
-        <div>📩 Создатель: <span id="previewCreator">@LAFIX_noone_LafYaf2x</span></div>
-        <div>💬 Чат: <span id="previewChatLink">https://t.me/+sm7bhU5XPSNkYzgy</span></div>
-        <div class="status" style="margin-top: 12px;">✓ Синхронизация через localStorage (клиентская)</div>
     </div>
-    <footer>
-        Все изменения сохраняются в вашем браузере. Чтобы поделиться — экспортируйте/импортируйте данные через консоль разработчика или используйте бэкап.
-    </footer>
+
+    <div class="cards-grid">
+        <!-- Карточка создателя -->
+        <div class="card">
+            <h3>👤 Создатель</h3>
+            <p>Лидер и основатель клана. По всем вопросам — в личные сообщения.</p>
+            <a href="https://t.me/LAFIX_noone_LafYaf2x" target="_blank" class="telegram-link">
+                📩 Написать создателю → @LAFIX_noone_LafYaf2x
+            </a>
+        </div>
+
+        <!-- Карточка чата -->
+        <div class="card">
+            <h3>💬 Чат клана</h3>
+            <p>Общение, кооперация, обсуждение тактик и просто приятная атмосфера.</p>
+            <a href="https://t.me/+sm7bhU5XPSNkYzgy" target="_blank" class="telegram-link">
+                💬 Вступить в чат → Telegram Group
+            </a>
+        </div>
+
+        <!-- Дополнительная карточка правил/новостей (управляемая через админку) -->
+        <div class="card" id="dynamicNewsCard">
+            <h3>📢 Новости клана</h3>
+            <div id="newsContent">
+                <p>🏆 Еженедельные турниры каждый вторник.</p>
+                <p>🎮 Набор активных игроков.</p>
+                <p>✨ Поддержка и взаимопомощь 24/7.</p>
+            </div>
+            <small style="display: block; margin-top: 16px; opacity: 0.7;">Обновляется через админ-панель</small>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© DARK LEGION — вместе сильнее | Версия 1.0 | Админ-панель: /admin.html</p>
+    </div>
 </div>
 
+<!-- Скрипт для загрузки динамических данных с localStorage (синхронизация с админкой) -->
 <script>
-    // Значения по умолчанию (оригинальные)
-    const DEFAULT_VALUES = {
-        clanName: '⚡ DARK LEGION ⚡',
-        tagline: '| Элитное сообщество | Тактика | Дружба | Победы |',
-        news: '<p>🏆 Еженедельные турниры каждый вторник.</p><p>🎮 Набор активных игроков.</p><p>✨ Поддержка и взаимопомощь 24/7.</p>',
-        chatLink: 'https://t.me/+sm7bhU5XPSNkYzgy',
-        creatorTag: '@LAFIX_noone_LafYaf2x'
-    };
+    function loadClanData() {
+        const savedTagline = localStorage.getItem('clan_tagline');
+        const savedNews = localStorage.getItem('clan_news');
+        const savedClanName = localStorage.getItem('clan_name');
 
-    // DOM элементы
-    const clanNameInput = document.getElementById('clanNameInput');
-    const taglineInput = document.getElementById('taglineInput');
-    const newsInput = document.getElementById('newsInput');
-    const chatLinkInput = document.getElementById('chatLinkInput');
-    const creatorTagInput = document.getElementById('creatorTagInput');
-    const previewName = document.getElementById('previewName');
-    const previewTagline = document.getElementById('previewTagline');
-    const previewNewsShort = document.getElementById('previewNewsShort');
-    const previewCreator = document.getElementById('previewCreator');
-    const previewChatLink = document.getElementById('previewChatLink');
-
-    function loadToForm() {
-        clanNameInput.value = localStorage.getItem('clan_name') || DEFAULT_VALUES.clanName;
-        taglineInput.value = localStorage.getItem('clan_tagline') || DEFAULT_VALUES.tagline;
-        newsInput.value = localStorage.getItem('clan_news') || DEFAULT_VALUES.news;
-        chatLinkInput.value = localStorage.getItem('clan_chat_link') || DEFAULT_VALUES.chatLink;
-        creatorTagInput.value = localStorage.getItem('clan_creator') || DEFAULT_VALUES.creatorTag;
-        updatePreview();
+        if (savedTagline) {
+            document.querySelector('.tagline').innerText = savedTagline;
+        }
+        if (savedClanName) {
+            document.querySelector('.clan-name').innerHTML = savedClanName;
+        }
+        if (savedNews) {
+            const newsDiv = document.getElementById('newsContent');
+            if (newsDiv) {
+                // Поддержка HTML в новостях
+                newsDiv.innerHTML = savedNews;
+            }
+        }
     }
+    loadClanData();
 
-    function updatePreview() {
-        const name = clanNameInput.value || DEFAULT_VALUES.clanName;
-        const tagline = taglineInput.value || DEFAULT_VALUES.tagline;
-        const newsRaw = newsInput.value || DEFAULT_VALUES.news;
-        const creator = creatorTagInput.value || DEFAULT_VALUES.creatorTag;
-        const chatLink = chatLinkInput.value || DEFAULT_VALUES.chatLink;
-
-        previewName.innerHTML = name;
-        previewTagline.innerText = tagline;
-        // Показываем в превью первые ~80 символов без html тегов (для краткости)
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = newsRaw;
-        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-        previewNewsShort.innerText = plainText.substring(0, 85) + (plainText.length > 85 ? '…' : '');
-        previewCreator.innerText = creator;
-        previewChatLink.innerText = chatLink;
-    }
-
-    function saveToStorage() {
-        localStorage.setItem('clan_name', clanNameInput.value);
-        localStorage.setItem('clan_tagline', taglineInput.value);
-        localStorage.setItem('clan_news', newsInput.value);
-        localStorage.setItem('clan_chat_link', chatLinkInput.value);
-        localStorage.setItem('clan_creator', creatorTagInput.value);
-        
-        // Показываем уведомление
-        const statusMsg = document.createElement('div');
-        statusMsg.innerText = '✅ Все изменения сохранены! Сайт обновлён.';
-        statusMsg.style.position = 'fixed';
-        statusMsg.style.bottom = '20px';
-        statusMsg.style.right = '20px';
-        statusMsg.style.background = '#1f3a3f';
-        statusMsg.style.padding = '10px 18px';
-        statusMsg.style.borderRadius = '40px';
-        statusMsg.style.zIndex = '999';
-        statusMsg.style.border = '1px solid #4affb5';
-        document.body.appendChild(statusMsg);
-        setTimeout(() => statusMsg.remove(), 2300);
-        
-        updatePreview();
-        // Триггерим событие storage для других вкладок (сайт обновится)
-        window.dispatchEvent(new StorageEvent('storage', { key: 'clan_news', newValue: newsInput.value }));
-    }
-
-    function resetToDefault() {
-        clanNameInput.value = DEFAULT_VALUES.clanName;
-        taglineInput.value = DEFAULT_VALUES.tagline;
-        newsInput.value = DEFAULT_VALUES.news;
-        chatLinkInput.value = DEFAULT_VALUES.chatLink;
-        creatorTagInput.value = DEFAULT_VALUES.creatorTag;
-        saveToStorage();
-        updatePreview();
-    }
-
-    function openPublicSite() {
-        window.open('index.html', '_blank');
-    }
-
-    // При изменении полей обновляем превью
-    clanNameInput.addEventListener('input', updatePreview);
-    taglineInput.addEventListener('input', updatePreview);
-    newsInput.addEventListener('input', updatePreview);
-    chatLinkInput.addEventListener('input', updatePreview);
-    creatorTagInput.addEventListener('input', updatePreview);
-    
-    document.getElementById('saveBtn').addEventListener('click', saveToStorage);
-    document.getElementById('resetBtn').addEventListener('click', resetToDefault);
-    document.getElementById('viewSiteBtn').addEventListener('click', openPublicSite);
-    
-    // Стартовая загрузка
-    loadToForm();
+    // Авто-обновление при изменении localStorage (если админка открыта в другой вкладке)
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'clan_news' || e.key === 'clan_tagline' || e.key === 'clan_name') {
+            loadClanData();
+        }
+    });
 </script>
 </body>
 </html>
